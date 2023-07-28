@@ -5,78 +5,107 @@ function getComputerChoice() {
     return choice
 }
 
-function playRound(playerSelection, computerSelection) {
+function playRound(e, playerSelection, computerSelection='rock') {
     const rock = 'rock'
     const paper = 'paper'
     const scissors = 'scissors'
-    playerSelection = prompt('What is your move?')
+    playerSelection = e.target.id
     computerSelection = getComputerChoice()
+    results = document.querySelector('.text')
     if (playerSelection.toLowerCase() === rock) {
         if (computerSelection === rock) {
-            return 'Tie!'
+            results.textContent += 'Tie!\n'
+            return 't'
         }
         else if (computerSelection === paper) {
-            return 'Paper! You lose!'
+            results.textContent += 'Paper! You lose!\n'
+            return 'cw'
         }
 
         else if (computerSelection === scissors) {
-            return 'Scissors! You win!'
+            results.textContent += 'Scissors! You win!\n'
+            return 'pw'
         }
     }
     else if (playerSelection.toLowerCase() === paper) {
         if (computerSelection === rock) {
-            return 'Rock! You win!'
+            results.textContent += 'Rock! You win!\n'
+            return 'pw'
         }
         
         else if (computerSelection === paper) {
-            return 'Tie!'
+            results.textContent += 'Tie!\n'
+            return 't'
         }
 
         else if (computerSelection === scissors) {
-            return 'Scissors! You lose!'
+            results.textContent += 'Scissors! You lose!\n'
+            return 'cw'
         }
     }
     else if (playerSelection.toLowerCase() === scissors) {
         if (computerSelection === rock) {
-            return 'Rock! You lose!'
+            results.textContent += 'Rock! You lose!\n'
+            return 'cw'
         }
 
         else if (computerSelection === paper) {
-            return 'Paper! You win!'
+            results.textContent += 'Paper! You win!\n'
+            return 'pw'
         }
         
         else if (computerSelection === scissors) {
-            return 'Tie!'
+            results.textContent += 'Tie!\n'
+            return 't'
         }
     }
     else {
-        return 'Oops! Invalid move...'
+        results.textContent += 'Oops! Invalid move...\n'
     }
 }
 
-function game() {
-    let playerScore = 0
-    let computerScore = 0
-    while (playerScore < 3 && computerScore < 3) {
-        result = playRound()
-        if (result.includes('win')) {
-            ++playerScore;
-            console.log('You won the round! ' + playerScore + ' - ' + computerScore)
-        }
-        else if (result.includes('lose')) {
-            ++computerScore;
-            console.log('You lost the round! ' + playerScore + ' - ' + computerScore)
-        }
-        else {
-            console.log('Tie! Keep going')
-        }
+let playerScore = 0
+let computerScore = 0
+
+function game(e) {
+    round = playRound(e)
+    if (round == 'pw') {
+        ++playerScore
     }
-    if (playerScore === 3) {
-        return console.log(`Congratulations! You win! Final score: ${playerScore} - ${computerScore}`)
-    } 
-    else {
-        return console.log(`Sorry! You lost. Better luck next time! Final score: ${playerScore} - ${computerScore}`)
+    else if (round == 'cw') {
+        ++computerScore
+    }
+    const score = document.querySelector('.score');
+    score.textContent = `${playerScore} - ${computerScore}`;
+    if (playerScore == 3 || computerScore == 3) {
+        const buttons = document.querySelectorAll('.button');
+        buttons.forEach(button => {
+            button.removeEventListener('click', game)
+        })
+        const h2 = document.querySelector('div > h2');
+        playerScore > computerScore ? h2.textContent = 'wow yay you did it!! :3' : h2.textContent = 'oh u lost. cringe :/';
     }
 }
 
-game()
+function newGame() {
+    playerScore = 0
+    computerScore = 0
+    const text = document.querySelector('.text');
+    text.textContent = ''
+    const container = document.querySelector('.container');
+    if (document.querySelector('.container > h2') !== null) {
+        message = document.querySelector('.container > h2');
+        container.removeChild(message)
+    }
+    const h2 = document.createElement('h2')
+    container.appendChild(h2)
+    const score = document.querySelector('.score');
+    score.textContent = `${playerScore} - ${computerScore}`;
+    const buttons = document.querySelectorAll('.button')
+    buttons.forEach(button => {
+        button.addEventListener('click', game)
+    })
+}
+
+const startGame = document.querySelector('#start')
+startGame.addEventListener('click', newGame)
